@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>temp</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>index</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14593,7 +14593,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Harvest-Regressions-using-Satellite-Imagery">Harvest Regressions using Satellite Imagery<a class="anchor-link" href="#Harvest-Regressions-using-Satellite-Imagery">&#182;</a></h1>
+<h1 id="Crop-Yield-Prediction-Model">Crop Yield Prediction Model<a class="anchor-link" href="#Crop-Yield-Prediction-Model">&#182;</a></h1><h3 id="Samuel-Rennich">Samuel Rennich<a class="anchor-link" href="#Samuel-Rennich">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -14604,7 +14604,61 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Libraries">Libraries<a class="anchor-link" href="#Libraries">&#182;</a></h3>
+<h3 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h3><p>Using crop yield data from the University of Maryland's Wye Research and Education Center, I am able to develop yield prediction models based on satellite imagery taken during the growing season.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Significance">Significance<a class="anchor-link" href="#Significance">&#182;</a></h3><p>Yield prediction using remote systems (satellite imagery) is important not only from the perspective of the individual farm operator, but also for policy makers and market regulators. If national yields for different crops can be predicted with strong accuracy weeks or months before harvest, prices can be better set at commodity exchanges and better regulated by the United States Department of Agricultural (USDA). The Farm Bill, the piece of legislature that must be renewed every 5 years by Congress, can be informed of the estimated future of harvest results, the very backbone of how we produce most of our food in the United States.</p>
+<p>Although this type of yield prediction model is not the end-all-be-all for estimating future harvests, it is minimally invasive to the individual farmer and it requires less data than more involved systems (low-flying drones, tissue sampling, and moisture sampling). If a model like this one is trained on data taken from across the country, it can reasonably make predictions for yields several weeks out by only using high-orbit satellites and only one type of image.</p>
+<p>The tutorial below takes into account the frequent messiness of tractor/combine data and produces a reasonably accurate model with a small sample of satellite imagery. This project could easily be expanded to also use readily available weather, climate, and sunlight data to further improve the model with minimal effort.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="The-Data">The Data<a class="anchor-link" href="#The-Data">&#182;</a></h3><p>Approximately 10 years ago, the Wye Research and Education Center (WREC) acquired several data-collecting combines, as well as an advanced Real-Time Kinematic (RTK) tower that allowed for extremely accurate (&lt;1cm error) geolocation systems. Every year, come harvest time, whether the crop be corn, wheat, or soybean, the combines collect exact data on not only the quantity that is being harvested every meter, but also the moisture and detritus levels.</p>
+<p>For predicting future yields, we turn to Normalized Difference Vegetation Index (NDVI) enabled satellite systems. NDVI compares given light frequencies to determine the effective &quot;greenness&quot; of an area, producing a fairly significant idea of the success and quality of the crop. Both MODIS and LandSat provide these images, and both have been used to create NDVI arrays for the areas of interest at the WREC.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="The-Process">The Process<a class="anchor-link" href="#The-Process">&#182;</a></h3><p>Much of this process is dedicated to data cleaning and managing, with the last steps being matching NDVI time-series information with crop yield results to allow for a Random Forest Regression (RFR) to produce a high quality yield predication model.</p>
+<p>As the combines and tractors produce large swathes of data, they are often mishandled and deformed due to changes between systems (between tractors, different computer types, text encoding, etc.), and so allowing for poorly identified and mislabeled data to be properly cleaned and organized was a primary goal of this project.</p>
+<p>All of the tractor/combine data is imported in the format that the machine produces (CSV) and must be identified, parsed, checked, and reallocated to the appropriate folders/export CSVs. A Pandas Dataframe is used while the data is being handled, but once it has been cleaned, it is exported as a CSV to allow for other analysis/reports to be completed on the cleaned data. This is admittedly less efficient for any single project, as importing, cleaning, exporting, and then re-importing adds a significant amount of time, but because this data may be used elsewhere, creating new CSVs is practical, so that the data does not need to be cleaned for every new project.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Libraries">Libraries<a class="anchor-link" href="#Libraries">&#182;</a></h3><p>These libraries encompass all packages needed to complete both the cleaning and model-creation for the entire project. Some of these libraries are proprietary (geopandas, geowombat), but all others can be found within the Pip package manager.</p>
+
 </div>
 </div>
 </div>
@@ -14617,10 +14671,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">rmtree</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">geowombat.ml</span> <span class="kn">import</span> <span class="n">fit</span><span class="p">,</span> <span class="n">predict</span><span class="p">,</span> <span class="n">fit_predict</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
@@ -14647,7 +14701,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Declare-relevant-dirs-and-files">Declare relevant dirs and files<a class="anchor-link" href="#Declare-relevant-dirs-and-files">&#182;</a></h3>
+<h3 id="Relevant-Directories-and-Files">Relevant Directories and Files<a class="anchor-link" href="#Relevant-Directories-and-Files">&#182;</a></h3><p>These paths are used within the folder structure of the whole project. No files, other than the index.html and README will be present in the final submission, but understand that there is an external file structure that supports the data-holding. The code, however, is all self-contained within this tutorial</p>
+
 </div>
 </div>
 </div>
@@ -14659,7 +14714,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tif_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/raw/tif&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">header_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/sample/headers&quot;</span>
+<span class="n">raw_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/raw&quot;</span>
+<span class="n">csv_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/processed/csv&quot;</span>
+
+<span class="n">tif_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/raw/tif&quot;</span>
 <span class="n">harvest_dir</span> <span class="o">=</span> <span class="s2">&quot;./data/processed/csv/harvest&quot;</span>
 </pre></div>
 
